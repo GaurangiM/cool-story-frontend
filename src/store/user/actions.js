@@ -35,7 +35,7 @@ export const signUp = (name, email, password) => {
         email,
         password
       });
-
+      console.log(response)
       dispatch(loginSuccess(response.data));
       dispatch(showMessageWithTimeout("success", true, "account created"));
       dispatch(appDoneLoading());
@@ -60,7 +60,7 @@ export const login = (email, password) => {
         email,
         password
       });
-
+      console.log(response)
       dispatch(loginSuccess(response.data));
       dispatch(showMessageWithTimeout("success", false, "welcome back!", 1500));
       dispatch(appDoneLoading());

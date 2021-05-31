@@ -1,6 +1,6 @@
 import { apiUrl } from "../../config/constants";
 import axios from "axios";
-import { selectToken } from "./selectors";
+import { selectToken, selectUser } from "./selectors";
 import {
   appLoading,
   appDoneLoading,
@@ -11,7 +11,7 @@ import {
 export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
 export const TOKEN_STILL_VALID = "TOKEN_STILL_VALID";
 export const LOG_OUT = "LOG_OUT";
-
+export const STORY_POST_SUCCESS = "STORY_POST_SUCCESS"
 const loginSuccess = userWithToken => {
   return {
     type: LOGIN_SUCCESS,
@@ -25,6 +25,38 @@ const tokenStillValid = userWithoutToken => ({
 });
 
 export const logOut = () => ({ type: LOG_OUT });
+
+export const storyPostSuccess = (story)=> ({
+  type: STORY_POST_SUCCESS,
+  payload: story
+})
+
+export const postStory = (name, content, imageUrl)=> async(dispatch, getState)=> {
+  const { space, token} = selectUser(getState())
+  console.log(space)
+  dispatch(appLoading());
+  try {
+    const response = await axios.post(`${apiUrl}/${space.id}/postStory`, 
+    {
+      name,
+      content,
+      imageUrl,
+    }, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+    console.log("Front", response);
+    dispatch(
+      showMessageWithTimeout("success", false, response.data.message, 3000)
+    );
+    dispatch(storyPostSuccess(response.data.story));
+    dispatch(appDoneLoading());
+  }catch (error) {
+      console.log(error)
+      dispatch(appDoneLoading());
+    }
+}
 
 export const signUp = (name, email, password) => {
   return async (dispatch, getState) => {

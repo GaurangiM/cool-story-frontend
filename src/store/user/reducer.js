@@ -1,4 +1,4 @@
-import { LOG_OUT, LOGIN_SUCCESS, TOKEN_STILL_VALID, STORY_POST_SUCCESS } from "./actions";
+import { SPACE_UPDATED, LOG_OUT, LOGIN_SUCCESS, TOKEN_STILL_VALID, STORY_POST_SUCCESS, STORY_DELETE_SUCCESS } from "./actions";
 
 const initialState = {
   token: localStorage.getItem("token"),
@@ -32,6 +32,19 @@ export default (state = initialState, action) => {
           stories: [...state.space.stories, action.payload]
         }
        }
+
+    case STORY_DELETE_SUCCESS: 
+       const storyId = action.payload;
+       const newStories = state.space.stories.filter(
+         story=> story.id !== storyId)
+       return {
+         ...state,
+         space: {
+           ...state.space,
+           stories: newStories
+         }
+       }
+    
 
     default:
       return state;

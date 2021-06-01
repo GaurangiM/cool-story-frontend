@@ -12,6 +12,8 @@ export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
 export const TOKEN_STILL_VALID = "TOKEN_STILL_VALID";
 export const LOG_OUT = "LOG_OUT";
 export const STORY_POST_SUCCESS = "STORY_POST_SUCCESS"
+export const STORY_DELETE_SUCCESS = "STORY_DELETE_SUCCESS";
+export const SPACE_UPDATED = "SPACE_UPDATED";
 const loginSuccess = userWithToken => {
   return {
     type: LOGIN_SUCCESS,
@@ -30,6 +32,37 @@ export const storyPostSuccess = (story)=> ({
   type: STORY_POST_SUCCESS,
   payload: story
 })
+
+export const storyDeleteSuccess = storyId => ({
+  type: STORY_DELETE_SUCCESS,
+  payload: storyId
+});
+
+export const spaceUpdated = space => ({
+  type: SPACE_UPDATED,
+  payload: space
+});
+
+export const deleteStory = (storyId, spaceId)=> async(dispatch, getState)=> {
+  const { space, token} = selectUser(getState())
+  console.log(space)
+  dispatch(appLoading());
+  try {
+      const response = await axios.delete(`${apiUrl}/spaces/${spaceId}/stories/${storyId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      console.log("Story deleted?", response.data);
+      dispatch(storyDeleteSuccess(storyId));
+      //dispatch(spaceUpdated(response.data.space));
+      dispatch(appDoneLoading());
+  }catch(e) {
+    console.log(e)
+    dispatch(appDoneLoading());
+  }
+}
 
 export const postStory = (name, content, imageUrl)=> async(dispatch, getState)=> {
   const { space, token} = selectUser(getState())

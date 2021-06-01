@@ -2,15 +2,32 @@ import React, { useState, useEffect } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { postStory } from "../../store/user/actions"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
+import { selectUser } from '../../store/user/selectors'
+import Space from '../../components/Space'
+import StoryCarousel from '../../components/StoryCarousel'
+import { useHistory } from 'react-router-dom'
+import Loading from "../../components/Loading";
 
 const MySpace = (props)=> {
-    const [showForm, setShowForm] = useState(false)
+    const [showPostForm, setShowPostForm] = useState(false)
+    const [showPostEditForm, setShowPostEditForm] = useState(false)
     const [postName, setPostName] = useState("");
     const [postContent, setPostContent] = useState("");
     const [imgURL, setImgURL] = useState("")
     const [showImage, setShowImage] = useState(false)
     const dispatch = useDispatch()
+    const {space, token, id} = useSelector(selectUser)
+
+    const history = useHistory();
+
+    if (token === null) {
+      history.push("/");
+    }
+
+    if (space === null) {
+      return <Loading />;
+    }
 
     const submitPost = (e)=> {
         e.preventDefault();
@@ -23,10 +40,20 @@ const MySpace = (props)=> {
     
     return (
         <div>
-            {!showForm && 
-            <button onClick={()=> {setShowForm(true)}}>Post a cool story bro</button>}
+          <Space
+              id={space.id}
+              title={space.title}
+              description={space.description}
+              backgroundColor={space.backgroundColor}
+              color={space.color}
+              showLink={false}
+          />
+            {!showPostForm && 
+            <button onClick={()=> {setShowPostForm(true)}}>Post a cool story bro</button>}
 
-            {showForm && (
+            <button onClick={()=> {setShowPostEditForm(true)}}>Edit My Space</button>
+
+            {showPostForm && (
                 <Form onSubmit={(e)=>submitPost(e)}>
                 <Form.Group controlId="formBasicName">
                   <Form.Label>Name</Form.Label>
@@ -57,10 +84,15 @@ const MySpace = (props)=> {
                 <Button variant="primary" type="submit">
                   Submit
                 </Button>
+                <Button variant="primary" onClick={()=> setShowPostForm(false)}>
+                  Cancel
+                </Button>
               </Form>
             )}
-           
 
+            {}
+           
+           <StoryCarousel space={space} />
         </div>
     )
 }

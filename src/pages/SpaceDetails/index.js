@@ -4,6 +4,8 @@ import { fetctSpace } from '../../store/spaceDetails/actions'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectSpaceDetails } from '../../store/spaceDetails/selectors'
 import Space from '../../components/Space'
+import StoryCarousel from '../../components/StoryCarousel'
+import Container from "react-bootstrap/Container";
 
 const SpaceDetails = (props)=> {
     const spaceId = useParams("id")
@@ -25,7 +27,9 @@ const SpaceDetails = (props)=> {
                     color={spaceDetails.color}
                     showLink={false}
             />
-            
+            <Container>
+                <StoryCarousel space={spaceDetails} />
+            </Container>
         </div>
     )
 }
